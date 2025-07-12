@@ -1,0 +1,2 @@
+Usuario: administrador
+contraseña: admin1234
