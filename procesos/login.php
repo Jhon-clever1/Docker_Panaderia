@@ -12,7 +12,7 @@
 
     if($array['contar']>0){
         $_SESSION['usuario'] = $usuario;
-        header("location: ../listar.php");
+        header("location: ../dashboard.php");
     }else{
         echo "Datos incorrectos";
     }

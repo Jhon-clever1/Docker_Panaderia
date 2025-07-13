@@ -111,9 +111,6 @@ if(!isset($usuario)){
 			
 				<a class="btn btn-danger" href="./reportes/reporteProductos.php">
 					<i class="fa fa-list"></i>Reporte productos</a>
-                    
-                <a class="btn btn-info" href="./reportes/reporteProductosMasVendidos.php">
-                    <i class="fa fa-chart-bar"></i> Productos más vendidos</a>
 			</div>
 			
 			<div class="table-container">

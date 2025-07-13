@@ -263,6 +263,10 @@ $total_vendido = array_sum(array_column($productos, 'total_vendido'));
                 <button type="submit" class="btn btn-primary" style="padding: 8px 15px; height: 38px;">
                     <i class="fas fa-search"></i> Buscar
                 </button>
+                <div>
+                    <a class="btn btn-info" href="./reportes/reporteProductosMasVendidos.php">
+                    <i class="fa fa-chart-bar"></i> Reporte Productos más vendidos</a>
+                </div>
             </form>
         </div>
         

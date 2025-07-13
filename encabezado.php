@@ -107,6 +107,9 @@
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto">
+					<li class="nav-item <?php echo $current_page == 'dashboard.php' ? 'active' : '' ?>">
+    					<a class="nav-link" href="./dashboard.php"><i class="fas fa-tachometer-alt"></i> Inicio</a>
+					</li>
 					<li class="nav-item <?php echo $current_page == 'listar.php' ? 'active' : '' ?>">
 						<a class="nav-link" href="./listar.php">Productos <span class="sr-only">(current)</span></a>
 					</li>
