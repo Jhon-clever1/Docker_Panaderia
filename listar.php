@@ -111,6 +111,9 @@ if(!isset($usuario)){
 			
 				<a class="btn btn-danger" href="./reportes/reporteProductos.php">
 					<i class="fa fa-list"></i>Reporte productos</a>
+                    
+                <a class="btn btn-info" href="./reportes/reporteProductosMasVendidos.php">
+                    <i class="fa fa-chart-bar"></i> Productos más vendidos</a>
 			</div>
 			
 			<div class="table-container">
@@ -120,7 +123,6 @@ if(!isset($usuario)){
 						<th>ID</th>
 						<th>Código</th>
 						<th>Descripción</th>
-						<th>Precio de compra</th>
 						<th>Precio de venta</th>
 						<th>Existencia</th>
 						<th class="action-btns" colspan="2">Acciones</th>
@@ -132,7 +134,6 @@ if(!isset($usuario)){
 						<td><?php echo $producto->id ?></td>
 						<td><?php echo $producto->codigo ?></td>
 						<td><?php echo $producto->descripcion ?></td>
-						<td><?php echo "S/". number_format($producto->precioCompra, 2)?></td>
 						<td><?php echo "S/". number_format($producto->precioVenta, 2)?></td>
 						<td><?php echo $producto->existencia ?></td>
 						<td><a class="btn btn-warning" href="<?php echo "editar.php?id=" . $producto->id?>"><i class="fa fa-edit"></i>Editar</a></td>
