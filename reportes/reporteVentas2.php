@@ -1,127 +1,150 @@
 <?php
-
 require('../fpdf/fpdf.php');
 
-$servidor="db";
-$usuario="panaderia";
-$password="pan12345";
-$bd="ventas";
+$servidor = "db";
+$usuario = "panaderia";
+$password = "pan12345";
+$bd = "ventas";
 
-$conexion=mysqli_connect($servidor, 
-                        $usuario, 
-                        $password, 
-                        $bd);
+$conexion = mysqli_connect($servidor, $usuario, $password, $bd);
 
-$sql="SELECT pv.cantidad,
+$sql = "SELECT pv.cantidad,
             prod.codigo,
             prod.descripcion,
             prod.precioVenta,
-			ve.id,
+            ve.id,
             ve.fecha,
-			(pv.cantidad * prod.precioVenta) as multiplicacion
-            from productos_vendidos as pv 
-            inner join productos as prod 
-            on pv.id_producto=prod.id
-            inner join ventas as ve
-            on pv.id_venta=ve.id";
+            (pv.cantidad * prod.precioVenta) as multiplicacion
+        FROM productos_vendidos as pv 
+        INNER JOIN productos as prod ON pv.id_producto=prod.id
+        INNER JOIN ventas as ve ON pv.id_venta=ve.id";
 
-$result=mysqli_query($conexion,$sql);
+$result = mysqli_query($conexion, $sql);
 
-$variable = "SELECT SUM(total) as totalVentas from ventas";
+$variable = "SELECT SUM(total) as totalVentas FROM ventas";
 $consulta = mysqli_query($conexion, $variable);
 
+class PDF extends FPDF
+{
+    // Cabecera de página
+    function Header()
+    {
+        // Logo
+        $this->Image('../imagenes/Pan.jpg', 10, 8, 25);
+        
+        // Título principal
+        $this->SetFont('Arial', 'B', 18);
+        $this->SetTextColor(44, 62, 80); // Azul oscuro
+        $this->Cell(0, 10, 'REPORTE DE VENTAS', 0, 1, 'C');
+        
+        // Información de la empresa
+        $this->SetFont('Arial', '', 10);
+        $this->SetTextColor(106, 115, 125); // Gris
+        $this->Cell(0, 5, 'Panaderia Artesanal "El Buen Pan"', 0, 1, 'C');
+        $this->Cell(0, 5, 'Camino antiguo a Coatepec, Bosque Briones #20', 0, 1, 'C');
+        
+        // Fecha del reporte
+        $this->SetFont('Arial', 'B', 10);
+        $this->SetTextColor(44, 62, 80);
+        $this->Cell(0, 5, 'Fecha del reporte: ' . date('d/m/Y H:i:s'), 0, 1, 'R');
+        
+        // Línea decorativa
+        $this->SetDrawColor(52, 152, 219); // Azul
+        $this->SetLineWidth(0.5);
+        $this->Line(10, 40, 200, 40);
+        $this->Ln(10);
+    }
 
-class PDF extends FPDF{
+    // Pie de página
+    function Footer()
+    {
+        // Posición: a 1.5 cm del final
+        $this->SetY(-15);
+        // Arial italic 8
+        $this->SetFont('Arial', 'I', 8);
+        $this->SetTextColor(106, 115, 125); // Gris
+        // Número de página
+        $this->Cell(0, 10, 'Pagina ' . $this->PageNo() . '/{nb}', 0, 0, 'C');
+    }
 
-	// Cabecera de página
-	function Header(){
-		// Logo
-		$this->Image('../imagenes/logo.png',10,5,30);
-
-		// Arial bold 15
-		$this->SetFont('Arial','B',18);
-
-		// Movernos a la derecha
-		$this->Cell(70);
-
-		// Título
-		$this->Cell(70,10,'Productos registrados',0,0,'C');
-
-		// Salto de línea
-
-		//Dirección
-		$this->Ln();
-		$this->SetFont('Times','',15);
-		$this->Cell(55);
-		$this->Cell(70, 10,'Camino antiguo a Coatepec, Bosque Briones #20', 0,1,'');
-
-		//Fecha
-		$this->Ln(10);
-		$this->Cell(145);
-		$this->SetFont('Arial','B',14);
-		$this->Cell(20, 10,'Fecha:', 0,0,'');
-		$this->SetFont('Arial','',14);
-		$this->Cell(20, 10,date('d/m/Y'), 0,1,'');
-		$this->Ln(10);
-
-
-	}
-
-	// Pie de página
-	function Footer(){
-
-		// Posición: a 1,5 cm del final
-		$this->SetY(-15);
-		// Arial italic 8
-		$this->SetFont('Arial','I',8);
-		// Número de página
-		$this->Cell(0,10,utf8_decode('Página').$this->PageNo().'/{nb}',0,0,'C');
-
-	}
+    // Tabla mejorada
+    function ImprovedTable($header, $data)
+    {
+        // Colores, ancho de línea y fuente
+        $this->SetFillColor(52, 152, 219); // Azul
+        $this->SetTextColor(255); // Blanco
+        $this->SetDrawColor(44, 62, 80); // Azul oscuro
+        $this->SetLineWidth(0.3);
+        $this->SetFont('Arial', 'B', 10);
+        
+        // Anchuras de las columnas
+        $w = array(15, 20, 50, 20, 20, 25, 40);
+        
+        // Cabeceras
+        $this->Cell(10); // Margen izquierdo
+        for($i = 0; $i < count($header); $i++) {
+            $this->Cell($w[$i], 7, $header[$i], 1, 0, 'C', true);
+        }
+        $this->Ln();
+        
+        // Restauración de colores y fuente
+        $this->SetFillColor(245, 245, 245); // Gris claro
+        $this->SetTextColor(44, 62, 80); // Azul oscuro
+        $this->SetFont('Arial', '', 9);
+        
+        // Datos
+        $fill = false;
+        foreach($data as $row) {
+            $this->Cell(10); // Margen izquierdo
+            $this->Cell($w[0], 6, $row['id'], 'LR', 0, 'C', $fill);
+            $this->Cell($w[1], 6, $row['codigo'], 'LR', 0, 'C', $fill);
+            $this->Cell($w[2], 6, utf8_decode($row['descripcion']), 'LR', 0, 'L', $fill);
+            $this->Cell($w[3], 6, 'S/' . number_format($row['precioVenta'], 2), 'LR', 0, 'R', $fill);
+            $this->Cell($w[4], 6, $row['cantidad'], 'LR', 0, 'C', $fill);
+            $this->Cell($w[5], 6, 'S/' . number_format($row['multiplicacion'], 2), 'LR', 0, 'R', $fill);
+            $this->Cell($w[6], 6, $row['fecha'], 'LR', 0, 'C', $fill);
+            $this->Ln();
+            $fill = !$fill;
+        }
+        
+        // Línea de cierre
+        $this->Cell(10);
+        $this->Cell(array_sum($w), 0, '', 'T');
+    }
 }
 
-	// Creación del objeto de la clase heredada
+// Creación del PDF
+$pdf = new PDF();
+$pdf->AliasNbPages();
+$pdf->AddPage();
 
-	$pdf = new PDF();
-	$pdf->AliasNbPages();
-    $pdf->AddPage();
-    
-    $pdf->Cell(10);
+// Encabezados de columna
+$header = array('ID', utf8_decode('Código'), utf8_decode('Descripción'), 'Precio U.', 'Cantidad', 'Total', 'Fecha');
 
-	$pdf->SetFillColor(232,232,232);
-	$pdf->SetFont('Arial','B',12);
-	$pdf->Cell(10,6,'ID',1,0,'C',1);
-	$pdf->Cell(20,6,utf8_decode('Código P.'),1,0,'C',1);
-    $pdf->Cell(40,6,utf8_decode('Descripcion'),1,0,'C',1);
-    $pdf->Cell(20,6,'Precio U.',1,0,'C',1);
-    $pdf->Cell(22,6,'Cantidad',1,0,'C',1);
-    $pdf->Cell(20,6,'Total',1,0,'C',1);
-	$pdf->Cell(40,6,'Fecha',1,1,'C',1);
-	
-    $pdf->SetFont('Arial','',10);
-    
+// Cargar los datos
+$data = array();
+while($row = $result->fetch_assoc()) {
+    $data[] = $row;
+}
 
-	while($row = $result->fetch_assoc())
-	{
-		$pdf->Cell(10);
-		$pdf->Cell(10,6,utf8_decode($row['id']),1,0,'C');
-		$pdf->Cell(20,6,utf8_decode($row['codigo']),1,0,'C');
-        $pdf->Cell(40,6,utf8_decode($row['descripcion']),1,0,'C');
-        $pdf->Cell(20,6,utf8_encode(CHR(36).$row['precioVenta']),1,0,'C');
-        $pdf->Cell(22,6,utf8_decode($row['cantidad']),1,0,'C');
-        $pdf->Cell(20,6,utf8_encode(CHR(36).$row['multiplicacion']),1,0,'C');
-		$pdf->Cell(40,6,utf8_decode($row['fecha']),1,1,'C');
-    }
-    
-    $pdf->Ln(25);
-	
-    while($col = $consulta->fetch_assoc()){
-        $pdf->SetFillColor(232,232,232,);
-        $pdf->SetFont('Arial','B',12);
-        $pdf->Cell(100);
-        $pdf->Cell(45,6,'Total de las ventas',0,0,'C',1);
-        $pdf->Cell(35,6,utf8_encode(CHR(36).$col['totalVentas']),0,1,'C'); 
-    }  
-	$pdf->Output('ventas.pdf', 'I');
+// Mostrar la tabla mejorada
+$pdf->ImprovedTable($header, $data);
 
+// Total de ventas
+$pdf->Ln(10);
+while($col = $consulta->fetch_assoc()) {
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->SetFillColor(52, 152, 219); // Azul
+    $pdf->SetTextColor(255); // Blanco
+    $pdf->Cell(140, 8, 'TOTAL GENERAL DE VENTAS:', 1, 0, 'R', true);
+    $pdf->Cell(40, 8, 'S/' . number_format($col['totalVentas'], 2), 1, 1, 'R', true);
+}
+
+// Pie adicional
+$pdf->Ln(5);
+$pdf->SetFont('Arial', 'I', 8);
+$pdf->SetTextColor(106, 115, 125);
+$pdf->Cell(0, 5, utf8_decode('* Reporte generado automáticamente por el sistema'), 0, 0, 'C');
+
+$pdf->Output('ventas.pdf', 'I');
 ?>

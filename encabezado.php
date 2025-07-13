@@ -1,6 +1,7 @@
 <?php
 	ob_start();
 	session_start();
+	$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
 <!DOCTYPE html>
@@ -15,13 +16,90 @@
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	
+	<style>
+		/* Estilos personalizados */
+		body {
+			font-family: 'Poppins', sans-serif;
+			background-color: #fafaf8ff;
+			background-image: url('imagenes/Fondo1.jpg');
+			background-size: cover; 
+			background-position: center;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+		}
+		
+		.navbar {
+			border-radius: 15px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			margin: 15px auto;
+			max-width: 95%;
+		}
+		
+		.nav-link {
+			font-weight: 500;
+			color: #333 !important;
+			padding: 8px 15px !important;
+			margin: 0 5px;
+			border-radius: 8px;
+			transition: all 0.3s ease;
+		}
+		
+		.nav-link:hover {
+			background-color: #b65d09d1;
+			color: white !important;
+			transform: translateY(-2px);
+		} 
+		.nav-item.active{
+			position: relative;
+		}
+		.nav-item.active .nav-link {
+			background-color: #b65d09d1;
+			color: white !important;
+			transform: translateY(-2px);
+		}
+		.nav-item.active .nav-link:after {
+			content: '';
+			position: absolute;
+			bottom: -5px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 70%;
+			height: 3px;
+			background: white;
+			border-radius: 3px;
+		}
+		.dropdown-menu {
+			border-radius: 10px;
+			border: none;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+		
+		.dropdown-item {
+			padding: 8px 15px;
+			font-weight: 500;
+		}
+		
+		.dropdown-item:hover {
+			background-color: #b65d09d1;
+			color: white;
+			border-radius: 6px;
+		}
+		
+		.navbar-toggler {
+			border: none;
+			outline: none;
+		}
+	</style>
 
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light ">
 	
 		<div class="container">
-			<img src="./imagenes/logo.png" width="70" height="70" class="d-inline-block align-top" alt="">
+			<img src="./imagenes/Pan.jpg" width="70" height="70" class="d-inline-block align-top" alt="" style="border-radius: 50%;">
 			
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
@@ -29,19 +107,19 @@
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item active">
+					<li class="nav-item <?php echo $current_page == 'listar.php' ? 'active' : '' ?>">
 						<a class="nav-link" href="./listar.php">Productos <span class="sr-only">(current)</span></a>
 					</li>
 
-					<li class="nav-item ">
+					<li class="nav-item <?php echo $current_page == 'insumos.php' ? 'active' : '' ?>">
 						<a class="nav-link" href="./insumos.php">Insumos <span class="sr-only">(current)</span></a>
 					</li>
 
-					<li class="nav-item">
+					<li class="nav-item <?php echo $current_page == 'vender.php' ? 'active' : '' ?>">
 						<a class="nav-link" href="./vender.php">Vender</a>
 					</li>
 					
-					<li class="nav-item">
+					<li class="nav-item <?php echo $current_page == 'ventas.php' ? 'active' : '' ?>">
 						<a class="nav-link " href="./ventas.php">Ventas realizadas</a>
 					</li>
 				</ul>
