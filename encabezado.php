@@ -127,18 +127,29 @@
 					</li>
 					<li class="nav-item <?php echo $current_page == 'reporte_productos_vendidos.php' ? 'active' : '' ?>">
     					<a class="nav-link" href="./reporte_productos_vendidos.php"><i class="fas fa-star"></i> Top Ventas</a>
-</li>
+					</li>
 				</ul>
 
 				<ul class="nav navbar-nav navbar-right">
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Salir
-						</a>
-						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<a class="dropdown-item" href="./salir.php">Salir</a>
-						</div>
-					</li>
+    				<li class="nav-item dropdown">
+        				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            				<?= htmlspecialchars($_SESSION['nombre'] ?? 'Usuario') ?>
+            				<?php if(isset($_SESSION['rol']) && $_SESSION['rol'] == 'administrador'): ?>
+                				<span class="badge badge-danger" style="background-color: #d35400; color: white; border-radius: 4px; padding: 3px 6px; font-size: 0.75em;">Admin</span>
+            				<?php endif; ?>
+        				</a>
+        				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+            				<?php if(isset($_SESSION['rol']) && $_SESSION['rol'] == 'administrador'): ?>
+                				<a class="dropdown-item" href="gestion_usuarios.php">
+                    				<i class="fas fa-users-cog"></i> Gestión de Usuarios
+                				</a>
+                				<div class="dropdown-divider"></div>
+            				<?php endif; ?>
+            				<a class="dropdown-item" href="./salir.php">
+                				<i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            				</a>
+        				</div>
+    				</li>
 				</ul>
 			</div>
 		</div>	

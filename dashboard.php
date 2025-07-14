@@ -171,7 +171,7 @@ if(!isset($usuario)) {
         </div>
         
         <!-- Tarjeta de Usuarios -->
-        <div class="card" onclick="window.location.href='./procesos/usuarios.php'">
+        <div class="card" onclick="window.location.href='gestion_usuarios.php'">
             <div class="card-body">
                 <div class="card-icon">
                     <i class="fas fa-users-cog"></i>
