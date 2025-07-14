@@ -239,8 +239,14 @@ $total = array_sum(array_column($productos, 'subtotal'));
                 <img src="imagenes/Pan.jpg" alt="Logo" class="logo">
                 <div class="empresa-info">
                     <strong>Panadería "El Buen Pan"</strong><br>
-                    Camino antiguo a Coatepec, Bosque Briones #20
+                    Camino antiguo a Coatepec, Bosque Briones #20<br>
+                    Tel: 9502343562 | RFC: PBA123456XYZ
                 </div>
+            </div>
+
+            <div style="text-align: center; margin: 10px 0;">
+                <strong>TICKET DE VENTA</strong><br>
+                #<?= str_pad($venta->id, 6, '0', STR_PAD_LEFT) ?>
             </div>
             
             <div class="venta-info">
@@ -275,9 +281,15 @@ $total = array_sum(array_column($productos, 'subtotal'));
             </div>
             
             <div class="footer">
-                ¡Gracias por su compra!<br>
-                Tel: 228 123 4567<br>
-                <?= date('d/m/Y H:i:s') ?>
+                <div style="text-align: center; margin-top: 10px;">
+                    <strong>¡GRACIAS POR SU COMPRA!</strong><br>
+                    <?= date('d/m/Y H:i:s') ?>
+                </div>
+                <?php if($total > 500): ?>
+                <div style="text-align: center; margin-top: 5px; font-size: 0.8em;">
+                    (Este ticket es válido como factura simplificada)
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

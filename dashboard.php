@@ -10,6 +10,26 @@ if(!isset($usuario)) {
 }
 ?>
 
+<?php
+// Verificar stock bajo para el dashboard
+include_once "base_de_datos.php";
+$sentencia = $base_de_datos->query("SELECT descripcion, existencia FROM productos WHERE existencia <= 5");
+$stockBajo = $sentencia->fetchAll(PDO::FETCH_OBJ);
+
+if(!empty($stockBajo)) {
+    echo '<div class="alert alert-warning" style="margin: 20px auto; max-width: 1200px;">';
+    echo '<h4><i class="fas fa-exclamation-triangle"></i> Alerta de Stock Bajo</h4>';
+    echo '<p>Algunos productos están por agotarse:</p>';
+    echo '<ul>';
+    foreach($stockBajo as $producto) {
+        echo '<li><strong>'.$producto->descripcion.'</strong> - '.$producto->existencia.' unidades restantes</li>';
+    }
+    echo '</ul>';
+    echo '<a href="listar.php" class="btn btn-sm btn-warning">Ver Productos</a>';
+    echo '</div>';
+}
+?>
+
 <style>
     .dashboard-container {
         max-width: 1200px;

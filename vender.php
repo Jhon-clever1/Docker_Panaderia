@@ -10,6 +10,49 @@ if(!isset($usuario)){
 	header("location: index.php");
 }else{
 ?>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+$(function() {
+    // Autocompletado
+    $("#busqueda").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "buscar_productos.php",
+                dataType: "json",
+                data: {
+                    term: request.term,
+                    tipo: $("#metodo_busqueda").val()
+                },
+                success: function(data) {
+                    response(data);
+                }
+            });
+        },
+        minLength: 2,
+        select: function(event, ui) {
+            // Al seleccionar un producto, enviar el formulario
+            if(ui.item) {
+                $("#busqueda").val(ui.item.value);
+                $("form").submit();
+            }
+            return false;
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $("<li>")
+            .append("<div>" + item.label + " <small>(" + item.codigo + ")</small><br>" +
+                   "<small>Precio: S/" + item.precio + " | Stock: " + item.stock + "</small></div>")
+            .appendTo(ul);
+    };
+
+    // Cambiar tipo de búsqueda
+    $("#metodo_busqueda").change(function() {
+        $("#tipo_busqueda").val($(this).val());
+    });
+});
+</script>
 
 <style>
     /* Estilos personalizados para vender.php */
@@ -140,6 +183,35 @@ if(!isset($usuario)){
         justify-content: flex-end;
         margin-top: 20px;
     }
+
+    .search-form {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+    .col-md-6, .col-md-4, .col-md-2 {
+        position: relative;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    @media (min-width: 768px) {
+        .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+        .col-md-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+        .col-md-2 { flex: 0 0 16.666667%; max-width: 16.666667%; }
+    }
+    .d-flex { display: flex; }
+    .align-items-end { align-items: flex-end; }
+    .btn-block { display: block; width: 100%; }
+
 </style>
 
 	<div class="container py-5 col-xs-12">
@@ -192,10 +264,29 @@ if(!isset($usuario)){
 			}
 		?>
 		<br>
-		<form method="post" action="agregarAlCarrito.php">
-			<label for="codigo">Código de barras:</label>
-			<input autocomplete="off" autofocus class="form-control" name="codigo" required type="text" id="codigo" placeholder="Escribe el código">
-		</form>
+		<form method="post" action="agregarAlCarrito.php" class="search-form">
+            <div class="form-row">
+                <div class="col-md-6">
+                    <label for="busqueda">Buscar por código o nombre:</label>
+                    <input autocomplete="off" autofocus class="form-control" name="busqueda" required type="text" id="busqueda" 
+                        placeholder="Escribe código o nombre del producto">
+                    <input type="hidden" name="tipo_busqueda" id="tipo_busqueda" value="auto">
+                </div>
+                <div class="col-md-4">
+                    <label for="metodo_busqueda">Método de búsqueda:</label>
+                    <select class="form-control" id="metodo_busqueda">
+                        <option value="auto">Autodetección</option>
+                        <option value="codigo">Código de barras</option>
+                        <option value="nombre">Nombre del producto</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-search"></i> Agregar
+                    </button>
+                </div>
+            </div>
+        </form>
 		
 		<div class="table-container">
 		<table class="table">

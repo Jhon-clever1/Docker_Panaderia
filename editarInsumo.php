@@ -11,7 +11,6 @@ if($insumo === FALSE){
 	exit();
 }
 ?>
-
 <?php include_once "encabezado.php" ?>
 
 <style>

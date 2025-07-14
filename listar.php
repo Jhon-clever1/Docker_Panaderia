@@ -114,6 +114,27 @@ if(!isset($usuario)){
 					<i class="fa fa-list"></i>Reporte productos</a>
 			</div>
 			
+            <?php
+                // Verificar stock bajo y mostrar alertas
+                $stockBajo = [];
+                foreach($productos as $producto) {
+                    if($producto->existencia <= 5) { // Umbral de 5 unidades
+                        $stockBajo[] = $producto;
+                    }
+                }
+
+                if(!empty($stockBajo)) {
+                    echo '<div class="alert alert-warning" style="margin-bottom: 20px;">';
+                    echo '<h4><i class="fas fa-exclamation-triangle"></i> Alerta de Stock Bajo</h4>';
+                    echo '<p>Los siguientes productos tienen bajo stock:</p>';
+                    echo '<ul>';
+                    foreach($stockBajo as $producto) {
+                        echo '<li><strong>'.$producto->descripcion.'</strong> - '.$producto->existencia.' unidades restantes</li>';
+                    }
+                    echo '</ul>';
+                    echo '</div>';
+                }
+            ?>
 			<div class="table-container">
 				<table class="table">
 				<thead>
@@ -139,10 +160,10 @@ if(!isset($usuario)){
                         <?php if (esAdministrador()): ?>
 						<td>
                                 <a href="editar.php?id=<?php echo $producto->id ?>" class="btn btn-warning btn-sm">
-                                    <i class="fa fa-edit"></i>
+                                    <i class="fa fa-edit"></i>Editar
                                 </a>
                                 <a href="eliminar.php?id=<?php echo $producto->id ?>" class="btn btn-danger btn-sm">
-                                    <i class="fa fa-trash"></i>
+                                    <i class="fa fa-trash"></i>Eliminar
                                 </a>
                         </td>
                         <?php endif; ?>

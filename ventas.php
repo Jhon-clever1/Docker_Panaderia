@@ -130,13 +130,92 @@ if(!isset($usuario)){
         gap: 15px;
         margin-bottom: 20px;
     }
+    .filtros-ventas {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .filtro-group {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .filtro-group label {
+        margin-bottom: 0;
+        font-weight: 500;
+    }
 </style>
 
 	<div class=" container py-5 col-xs-12">
 		<h1>Ventas Realizadas</h1>
+        <div class="filtros-ventas">
+    <h3>Filtrar Ventas</h3>
+    <form method="get" action="">
+        <div class="filtro-group">
+            <div>
+                <label for="fecha_inicio">Desde:</label>
+                <input type="date" id="fecha_inicio" name="fecha_inicio" 
+                       value="<?= isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : date('Y-m-d') ?>" 
+                       class="form-control">
+            </div>
+            <div>
+                <label for="fecha_fin">Hasta:</label>
+                <input type="date" id="fecha_fin" name="fecha_fin" 
+                       value="<?= isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : date('Y-m-d') ?>" 
+                       class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-filter"></i> Filtrar
+            </button>
+            <a href="ventas.php" class="btn btn-secondary">
+                <i class="fas fa-sync-alt"></i> Limpiar
+            </a>
+            <a href="?periodo=hoy" class="btn btn-info">
+                <i class="fas fa-calendar-day"></i> Hoy
+            </a>
+        </div>
+    </form>
+</div>
+
+<?php
+    // Modificar la consulta SQL para incluir filtros
+    $where = "";
+    $params = [];
+
+    if(isset($_GET['fecha_inicio']) && isset($_GET['fecha_fin'])) {
+        $where = " WHERE DATE(ventas.fecha) BETWEEN ? AND ? ";
+        $params = [$_GET['fecha_inicio'], $_GET['fecha_fin']];
+    } elseif(isset($_GET['periodo']) && $_GET['periodo'] == 'hoy') {
+        $where = " WHERE DATE(ventas.fecha) = ? ";
+        $params = [date('Y-m-d')];
+    }
+
+    $sql = "SELECT ventas.total, ventas.fecha, ventas.id, 
+            GROUP_CONCAT(productos.codigo, '..', productos.descripcion, '..', productos_vendidos.cantidad SEPARATOR '__') AS productos 
+            FROM ventas 
+            INNER JOIN productos_vendidos ON productos_vendidos.id_venta = ventas.id 
+            INNER JOIN productos ON productos.id = productos_vendidos.id_producto 
+            $where
+            GROUP BY ventas.id 
+            ORDER BY ventas.id DESC";
+
+    $sentencia = $base_de_datos->prepare($sql);
+    $sentencia->execute($params);
+    $ventas = $sentencia->fetchAll(PDO::FETCH_OBJ);
+
+    if(empty($ventas)) {
+        echo '<div class="alert alert-info">No se encontraron ventas en el período seleccionado</div>';
+    }
+    
+?>
 		<div class="btn-group">
-			<a class="btn btn-success" href="./vender.php"><i class="fa fa-plus"></i>Nueva Venta</a>
-			<a class="btn btn-danger" href="./reportes/reporteVentas2.php"><i class="fa fa-list"></i>Reporte de venta</a>
+			<a class="btn btn-success" href="./vender.php"><i class="fa fa-plus"></i>Nueva Venta
+        </a>
+			<a class="btn btn-danger" href="./reportes/reporteVentas2.php"><i class="fa fa-list"></i>Reporte de venta
+        </a>
 		</div>
 		
 		<div class="table-container">
