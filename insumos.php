@@ -4,6 +4,7 @@ include_once "encabezado.php"
 ?>
 
 <?php
+    include_once "control_acceso.php";
     include_once "base_de_datos.php";
     $sentencia = $base_de_datos->query("SELECT * FROM insumo;");
     $insumo = $sentencia->fetchAll(PDO::FETCH_OBJ);
@@ -128,7 +129,9 @@ include_once "encabezado.php"
 						<th>Total pagado</th>
 						<th>Existencia</th>
                         <th>Fecha compra</th>
+                        <?php if (esAdministrador()): ?>
 						<th class="action-btns" colspan="2">Acciones</th>
+                        <?php endif; ?>
 					</tr>
 				</thead>
 				<tbody>
@@ -141,7 +144,8 @@ include_once "encabezado.php"
 						<td><?php echo "S/".number_format($insumos->total_Compra, 2) ?></td>
 						<td><?php echo $insumos->existencia ?></td>
 						<td><?php echo date('d/m/Y', strtotime($insumos->fecha_compra)) ?></td>
-						<td class="action-btns">
+						<?php if (esAdministrador()): ?>
+                        <td class="action-btns">
 							<a class="btn btn-warning" href="<?php echo "editarInsumo.php?id=" . $insumos->id?>">
 								<i class="fa fa-edit"></i>Editar
 							</a>
@@ -151,6 +155,7 @@ include_once "encabezado.php"
 								<i class="fa fa-trash"></i>Eliminar
 							</a>
 						</td>
+                        <?php endif; ?>
 					</tr>
 					<?php } ?>
 

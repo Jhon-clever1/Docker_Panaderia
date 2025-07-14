@@ -1,5 +1,6 @@
 <?php
 include_once "encabezado.php";
+include_once "control_acceso.php";
 
 $usuario = $_SESSION['usuario'] ?? null;
 
@@ -171,6 +172,7 @@ if(!isset($usuario)) {
         </div>
         
         <!-- Tarjeta de Usuarios -->
+         <?php if (esAdministrador()): ?>
         <div class="card" onclick="window.location.href='gestion_usuarios.php'">
             <div class="card-body">
                 <div class="card-icon">
@@ -183,6 +185,7 @@ if(!isset($usuario)) {
                 <button class="btn btn-secondary btn-card">Acceder</button>
             </div>
         </div>
+        <?php endif; ?>
     </div>
 </div>
 

@@ -147,7 +147,10 @@ if(!isset($usuario)){
 					<th>Fecha</th>
 					<th>Productos vendidos</th>
 					<th>Total</th>
+
+                    <?php if (esAdministrador()): ?>
 					<th>Acciones</th>
+                    <?php endif; ?>
 				</tr>
 			</thead>
 			<tbody>
@@ -178,7 +181,9 @@ if(!isset($usuario)){
 						</table>
 					</td>
 					<td class="currency-format"><?php echo "S/".number_format($venta->total, 2) ?></td>
+                    <?php if (esAdministrador()): ?>
 					<td><a class="btn btn-danger action-btn" href="<?php echo "eliminarVenta.php?id=" . $venta->id?>"><i class="fa fa-trash"></i>Eliminar</a></td>
+                    <?php endif; ?>
 				</tr>
 				<?php } ?>
 			</tbody>

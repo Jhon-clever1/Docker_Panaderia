@@ -1,6 +1,7 @@
 <?php
 	ob_start();
 	session_start();
+	include_once "control_acceso.php";
 	$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -139,7 +140,7 @@
             				<?php endif; ?>
         				</a>
         				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-            				<?php if(isset($_SESSION['rol']) && $_SESSION['rol'] == 'administrador'): ?>
+            				<?php if(esAdministrador()): ?>
                 				<a class="dropdown-item" href="gestion_usuarios.php">
                     				<i class="fas fa-users-cog"></i> Gestión de Usuarios
                 				</a>

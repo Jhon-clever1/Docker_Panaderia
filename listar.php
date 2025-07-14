@@ -1,6 +1,7 @@
 <?php include_once "encabezado.php" ?>
 
 <?php
+include_once "control_acceso.php";
 include_once "base_de_datos.php";
 $sentencia = $base_de_datos->query("SELECT * FROM productos;");
 $productos = $sentencia->fetchAll(PDO::FETCH_OBJ);
@@ -122,8 +123,10 @@ if(!isset($usuario)){
 						<th>Descripción</th>
 						<th>Precio de venta</th>
 						<th>Existencia</th>
+                        <?php if (esAdministrador()): ?>
 						<th class="action-btns" colspan="2">Acciones</th>
-					</tr>
+                        <?php endif; ?>
+                    </tr>
 				</thead>
 				<tbody>
 					<?php foreach($productos as $producto){ ?>
@@ -133,8 +136,16 @@ if(!isset($usuario)){
 						<td><?php echo $producto->descripcion ?></td>
 						<td><?php echo "S/". number_format($producto->precioVenta, 2)?></td>
 						<td><?php echo $producto->existencia ?></td>
-						<td><a class="btn btn-warning" href="<?php echo "editar.php?id=" . $producto->id?>"><i class="fa fa-edit"></i>Editar</a></td>
-						<td><a class="btn btn-danger" href="<?php echo "eliminar.php?id=" . $producto->id?>"><i class="fa fa-trash"></i>Eliminar</a></td>
+                        <?php if (esAdministrador()): ?>
+						<td>
+                                <a href="editar.php?id=<?php echo $producto->id ?>" class="btn btn-warning btn-sm">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a href="eliminar.php?id=<?php echo $producto->id ?>" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                        </td>
+                        <?php endif; ?>
 					</tr>
 					<?php } ?>
 				</tbody>
