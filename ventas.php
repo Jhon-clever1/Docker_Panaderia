@@ -22,7 +22,7 @@ if(!isset($usuario)){
     }
     
     h1 {
-        color: #4e73df;
+        color: #000000d1;
         font-weight: 600;
         margin-bottom: 20px;
     }

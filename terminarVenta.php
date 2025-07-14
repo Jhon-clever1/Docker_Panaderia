@@ -2,6 +2,10 @@
 if(!isset($_POST["total"])) exit;
 
 session_start();
+if(empty($_SESSION["carrito"])) {
+    header("Location: ./vender.php?status=6");
+    exit;
+}
 include_once "base_de_datos.php";
 
 $total = $_POST["total"];

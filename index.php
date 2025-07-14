@@ -97,7 +97,7 @@
 				<br><br>
 				<div class="panel panel-default">
 					<div  class="panel panel-heading">
-						<h4>Panadería Santa Rosa</h4> 
+						<h4>Panadería Artesanal "El Buen Pan"</h4> 
 					</div>
 					<div class="panel panel-body login-container">
 						<div class="logo-side">
@@ -128,7 +128,7 @@
 			<br>
 			<br>
 			<br>
-			<p style="text-align: center;color: white; font-family:'Poppins', sans-ser">&copy 2020 Panadería Santa Rosa.Todos los derechos reservados </p>
+			<p style="text-align: center;color: white; font-family:'Poppins', sans-ser">&copy 2025 Panadería Artesanal "El Buen Pan".Todos los derechos reservados </p>
 		</div>
 	</div>
 </body>	

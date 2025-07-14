@@ -23,7 +23,7 @@ if(!isset($usuario)) {
     }
     
     .dashboard-title {
-        color: #2c3e50;
+        color: #b65d09d1;
         font-weight: 600;
         margin-bottom: 10px;
     }

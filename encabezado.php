@@ -9,7 +9,7 @@
 <html lang="es">
 <head>
 	<meta charset="UTF-8">
-	<title>Santa Rosa</title>
+	<title>Panaderia Artesanal "El Buen Pan"</title>
 	
 	<link rel="stylesheet" href="./css/fontawesome-all.min.css">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">

@@ -175,6 +175,12 @@ if(!isset($usuario)){
 					<div class="alert alert-danger">
 							<strong>Error: </strong>El producto está agotado
 						</div>
+                    <?php
+                }else if($_GET["status"] === "6"){
+                    ?>
+                    <div class="alert alert-danger">
+                            <strong>Error: </strong>Debes agregar al menos un producto para realizar la venta
+                    </div>
 					<?php
 				}else{
 					?>
