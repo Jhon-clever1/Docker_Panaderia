@@ -33,10 +33,8 @@ $(function() {
         },
         minLength: 2,
         select: function(event, ui) {
-            // Al seleccionar un producto, enviar el formulario
             if(ui.item) {
-                $("#busqueda").val(ui.item.value);
-                $("form").submit();
+                agregarProducto(ui.item.id, $("#cantidad").val());
             }
             return false;
         }
@@ -47,10 +45,63 @@ $(function() {
             .appendTo(ul);
     };
 
-    // Cambiar tipo de búsqueda
-    $("#metodo_busqueda").change(function() {
-        $("#tipo_busqueda").val($(this).val());
+    // Manejar Enter en el campo de búsqueda
+    $("#busqueda").keypress(function(e) {
+        if(e.which == 13) {
+            e.preventDefault();
+            if($("#busqueda").val().length >= 2) {
+                buscarYAgregar();
+            }
+        }
     });
+
+    // Manejar clic en el botón buscar
+    $("#btn-buscar").click(function() {
+        if($("#busqueda").val().length >= 2) {
+            buscarYAgregar();
+        }
+    });
+
+    function buscarYAgregar() {
+        $.ajax({
+            url: "buscar_productos.php",
+            dataType: "json",
+            data: {
+                term: $("#busqueda").val(),
+                tipo: $("#metodo_busqueda").val()
+            },
+            success: function(data) {
+                if(data.length > 0) {
+                    agregarProducto(data[0].id, $("#cantidad").val());
+                } else {
+                    alert("No se encontraron productos");
+                }
+            }
+        });
+    }
+
+    function agregarProducto(idProducto, cantidad) {
+        if(cantidad < 1) {
+            alert("La cantidad debe ser al menos 1");
+            return;
+        }
+        
+        $.ajax({
+            url: "agregarAlCarrito.php",
+            method: "POST",
+            data: {
+                busqueda: idProducto,
+                tipo_busqueda: "id",
+                cantidad: cantidad
+            },
+            success: function(response) {
+                location.reload();
+            },
+            error: function(xhr) {
+                alert("Error: " + xhr.responseText);
+            }
+        });
+    }
 });
 </script>
 
@@ -212,6 +263,31 @@ $(function() {
     .align-items-end { align-items: flex-end; }
     .btn-block { display: block; width: 100%; }
 
+    #cantidad {
+    text-align: center;
+    padding: 10px;
+}
+
+/* Estilo para el campo de cantidad */
+.input-group-quantity {
+    display: flex;
+    align-items: center;
+}
+
+.input-group-quantity button {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    background: #f8f9fa;
+    cursor: pointer;
+}
+
+.input-group-quantity input {
+    width: 50px;
+    text-align: center;
+    margin: 0 5px;
+}
+
 </style>
 
 	<div class="container py-5 col-xs-12">
@@ -264,25 +340,28 @@ $(function() {
 			}
 		?>
 		<br>
-		<form method="post" action="agregarAlCarrito.php" class="search-form">
+		<form class="search-form">
             <div class="form-row">
-                <div class="col-md-6">
-                    <label for="busqueda">Buscar por código o nombre:</label>
-                    <input autocomplete="off" autofocus class="form-control" name="busqueda" required type="text" id="busqueda" 
-                        placeholder="Escribe código o nombre del producto">
-                    <input type="hidden" name="tipo_busqueda" id="tipo_busqueda" value="auto">
+                <div class="col-md-5">
+                    <label for="busqueda">Buscar producto:</label>
+                    <input autocomplete="off" autofocus class="form-control" type="text" id="busqueda" 
+                        placeholder="Código o nombre del producto">
                 </div>
-                <div class="col-md-4">
-                    <label for="metodo_busqueda">Método de búsqueda:</label>
+                <div class="col-md-3">
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" min="1" value="1" class="form-control" id="cantidad">
+                </div>
+                <div class="col-md-2">
+                    <label for="metodo_busqueda">Método:</label>
                     <select class="form-control" id="metodo_busqueda">
                         <option value="auto">Autodetección</option>
-                        <option value="codigo">Código de barras</option>
-                        <option value="nombre">Nombre del producto</option>
+                        <option value="codigo">Por código</option>
+                        <option value="nombre">Por nombre</option>
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <i class="fas fa-search"></i> Agregar
+                    <button type="button" id="btn-buscar" class="btn btn-primary btn-block">
+                        <i class="fas fa-cart-plus"></i> Agregar
                     </button>
                 </div>
             </div>

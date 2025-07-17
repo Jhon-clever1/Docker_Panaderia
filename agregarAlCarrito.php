@@ -8,41 +8,32 @@ include_once "base_de_datos.php";
 
 $busqueda = $_POST["busqueda"];
 $tipoBusqueda = $_POST["tipo_busqueda"] ?? "auto";
+$cantidad = isset($_POST["cantidad"]) ? max(1, intval($_POST["cantidad"])) : 1;
 
 // Determinar el tipo de búsqueda
-if ($tipoBusqueda == "auto") {
-    // Autodetección: primero intenta por código, si no encuentra, busca por nombre
-    $sentencia = $base_de_datos->prepare("SELECT * FROM productos WHERE codigo = ? LIMIT 1;");
+if ($tipoBusqueda == "id") {
+    $sentencia = $base_de_datos->prepare("SELECT * FROM productos WHERE id = ? LIMIT 1;");
     $sentencia->execute([$busqueda]);
     $producto = $sentencia->fetch(PDO::FETCH_OBJ);
     
-    if (!$producto) {
-        $sentencia = $base_de_datos->prepare("SELECT * FROM productos WHERE descripcion LIKE ? LIMIT 1;");
-        $sentencia->execute(["%$busqueda%"]);
-        $producto = $sentencia->fetch(PDO::FETCH_OBJ);
+    if(!$producto) {
+        header("Location: ./vender.php?status=4");
+        exit;
     }
-} elseif ($tipoBusqueda == "codigo") {
-    $sentencia = $base_de_datos->prepare("SELECT * FROM productos WHERE codigo = ? LIMIT 1;");
-    $sentencia->execute([$busqueda]);
-    $producto = $sentencia->fetch(PDO::FETCH_OBJ);
-} else { // búsqueda por nombre
-    $sentencia = $base_de_datos->prepare("SELECT * FROM productos WHERE descripcion LIKE ? LIMIT 1;");
-    $sentencia->execute(["%$busqueda%"]);
-    $producto = $sentencia->fetch(PDO::FETCH_OBJ);
-}
+} else{
 
-# Si no existe, salimos y lo indicamos
-if (!$producto) {
-    header("Location: ./vender.php?status=4");
-    exit;
-}
+    # Si no existe, salimos y lo indicamos
+    if (!$producto) {
+        header("Location: ./vender.php?status=4");
+        exit;
+    }
 
-# Si no hay existencia...
-if ($producto->existencia < 1) {
-    header("Location: ./vender.php?status=5");
-    exit;
+    # Si no hay existencia...
+    if ($producto->existencia < 1) {
+        header("Location: ./vender.php?status=5");
+        exit;
+    }
 }
-
 session_start();
 # Buscar producto dentro del carrito
 $indice = false;
@@ -55,19 +46,19 @@ for ($i = 0; $i < count($_SESSION["carrito"]); $i++) {
 
 # Si no existe, lo agregamos como nuevo
 if ($indice === false) {
-    $producto->cantidad = 1;
-    $producto->total = $producto->precioVenta;
+    $producto->cantidad = $cantidad;
+    $producto->total = $producto->precioVenta*$cantidad;
     array_push($_SESSION["carrito"], $producto);
 } else {
     # Si ya existe, se agrega la cantidad
-    $cantidadExistente = $_SESSION["carrito"][$indice]->cantidad;
+    $nuevaCantidad = $_SESSION["carrito"][$indice]->cantidad + $cantidad;
     # si al sumarle uno supera lo que existe, no se agrega
-    if ($cantidadExistente + 1 > $producto->existencia) {
+    if ($nuevaCantidad > $producto->existencia) {
         header("Location: ./vender.php?status=5");
         exit;
     }
-    $_SESSION["carrito"][$indice]->cantidad++;
-    $_SESSION["carrito"][$indice]->total = $_SESSION["carrito"][$indice]->cantidad * $_SESSION["carrito"][$indice]->precioVenta;
+    $_SESSION["carrito"][$indice]->cantidad = $nuevaCantidad;
+    $_SESSION["carrito"][$indice]->total = $nuevaCantidad * $_SESSION["carrito"][$indice]->precioVenta;
 }
 
 header("Location: ./vender.php");

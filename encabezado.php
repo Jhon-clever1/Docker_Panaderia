@@ -93,6 +93,24 @@
 			border: none;
 			outline: none;
 		}
+		.form-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+		}
+		.col-md-4 {
+			flex: 0 0 33.333333%;
+			max-width: 33.333333%;
+			padding-right: 15px;
+			padding-left: 15px;
+		}
+		.d-flex {
+			display: flex;
+		}
+		.align-items-end {
+			align-items: flex-end;
+		}
 	</style>
 
 </head>

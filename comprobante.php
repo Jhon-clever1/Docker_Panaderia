@@ -314,5 +314,3 @@ $total = array_sum(array_column($productos, 'subtotal'));
     </script>
 </body>
 </html>
-
-<?php include_once "pie.php"; ?>
