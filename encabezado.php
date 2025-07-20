@@ -118,7 +118,6 @@
 	<nav class="navbar navbar-expand-lg navbar-light bg-light ">
 	
 		<div class="container">
-			<img src="./imagenes/Pan.jpg" width="70" height="70" class="d-inline-block align-top" alt="" style="border-radius: 50%;">
 			
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
@@ -127,7 +126,7 @@
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item <?php echo $current_page == 'dashboard.php' ? 'active' : '' ?>">
-    					<a class="nav-link" href="./dashboard.php"><i class="fas fa-tachometer-alt"></i> Inicio</a>
+    					<a class="nav-link" href="./dashboard.php"><img src="./imagenes/Pan.jpg" width="70" height="70" class="d-inline-block align-top" alt="" style="border-radius: 50%;"></a>
 					</li>
 					<li class="nav-item <?php echo $current_page == 'listar.php' ? 'active' : '' ?>">
 						<a class="nav-link" href="./listar.php">Productos <span class="sr-only">(current)</span></a>
@@ -146,6 +145,9 @@
 					</li>
 					<li class="nav-item <?php echo $current_page == 'reporte_productos_vendidos.php' ? 'active' : '' ?>">
     					<a class="nav-link" href="./reporte_productos_vendidos.php"><i class="fas fa-star"></i> Top Ventas</a>
+					</li>
+					<li class="nav-item <?php echo $current_page == 'analisis_ventas.php' ? 'active' : '' ?>">
+    					<a class="nav-link" href="./analisis_ventas.php"> Analisis</a>
 					</li>
 				</ul>
 

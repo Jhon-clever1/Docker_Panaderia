@@ -206,6 +206,20 @@ if(!empty($stockBajo)) {
             </div>
         </div>
         <?php endif; ?>
+
+        <!-- Tarjeta de Análisis de Ventas -->
+        <div class="card" onclick="window.location.href='analisis_ventas.php'">
+            <div class="card-body">
+                <div class="card-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="card-title">Análisis de Ventas</h3>
+                <p class="card-text">Ver horas pico y productos más vendidos por hora.</p>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-info btn-card">Ver Análisis</button>
+            </div>
+        </div>
     </div>
 </div>
 
