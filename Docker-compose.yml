@@ -1,19 +1,22 @@
-version: '3.8'
+version: "3.8"
 
 services:
+  # ---------- PHP + Apache ----------
   web:
     build: .
     ports:
       - "8080:80"
     volumes:
-      - .:/var/www/html
+      - .:/var/www/html           # <‑‑ cambia el volumen a ./web
     depends_on:
       - db
+      - flask_api                     # <‑‑ espera a que exista la API
     environment:
       - APACHE_RUN_USER=www-data
       - APACHE_RUN_GROUP=www-data
       - APACHE_LOG_DIR=/var/log/apache2
 
+  # ---------- MySQL ----------
   db:
     image: mysql:8.0
     environment:
@@ -25,8 +28,9 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./BD:/docker-entrypoint-initdb.d/ventas.sql
+      - ./BD:/docker-entrypoint-initdb.d
 
+  # ---------- phpMyAdmin ----------
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     depends_on:
@@ -36,6 +40,13 @@ services:
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: 123456789
+
+  # ---------- Flask + ONNX ----------
+  flask_api:
+    build: ./flask_api
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
 
 volumes:
   mysql_data:

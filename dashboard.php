@@ -220,6 +220,18 @@ if(!empty($stockBajo)) {
                 <button class="btn btn-info btn-card">Ver Análisis</button>
             </div>
         </div>
+        <div class="card" onclick="window.location.href='prediccion.php'">
+            <div class="card-body">
+                <div class="card-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="card-title">Prediccion</h3>
+                <p class="card-text">Ver Prediccion de Producto Recomendado</p>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-info btn-card">Ver Prediccion</button>
+            </div>
+        </div>
     </div>
 </div>
 
