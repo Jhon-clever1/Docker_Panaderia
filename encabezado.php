@@ -146,9 +146,12 @@
 					<li class="nav-item <?php echo $current_page == 'reporte_productos_vendidos.php' ? 'active' : '' ?>">
     					<a class="nav-link" href="./reporte_productos_vendidos.php"><i class="fas fa-star"></i> Top Ventas</a>
 					</li>
+
+					<?php if(esAdministrador()): ?>
 					<li class="nav-item <?php echo $current_page == 'analisis_ventas.php' ? 'active' : '' ?>">
     					<a class="nav-link" href="./analisis_ventas.php"> Analisis</a>
 					</li>
+					<?php endif; ?>
 				</ul>
 
 				<ul class="nav navbar-nav navbar-right">

@@ -19,9 +19,39 @@ $dias_espanol = [
 
 $dia_semana = $dias_espanol[$dia_numero];
 
-// 2. Llamar a la API Flask
+// 2. Función para obtener conteo de clusters durante el día
+function obtenerConteoClusters($dia_numero) {
+    $conteo = array_fill(0, 10, 0); // Inicializar conteo para 10 clusters
+    $url = "http://flask_api:5000/predict";
+    
+    for ($hora = 0; $hora < 24; $hora++) {
+        $body = json_encode(["hora" => $hora, "dia_semana" => $dia_numero]);
+        $opts = [
+            "http" => [
+                "header" => "Content-Type: application/json",
+                "method" => "POST",
+                "content" => $body
+            ]
+        ];
+        
+        $ctx = stream_context_create($opts);
+        $response = @file_get_contents($url, false, $ctx);
+        
+        if ($response !== false) {
+            $data = json_decode($response, true);
+            $cluster = $data["cluster"];
+            $conteo[$cluster]++;
+        }
+    }
+    
+    return $conteo;
+}
+
+$conteoClusters = obtenerConteoClusters($dia_numero);
+
+// 3. Llamar a la API Flask para la hora actual
 $url = "http://flask_api:5000/predict";
-$body = json_encode(["hora" => $hora, "dia_semana" => $dia_numero]); // Enviamos el número del día
+$body = json_encode(["hora" => $hora, "dia_semana" => $dia_numero]);
 
 $opts = [
     "http" => [
@@ -41,21 +71,27 @@ if ($response !== false) {
     $data = json_decode($response, true);
     $cluster = $data["cluster"];
 
-    // 3. Relacionar cada cluster con un producto
+    // 4. Relacionar cada cluster con un producto
     $productos_por_cluster = [
         0 => "Concha de chocolate",
         1 => "Dona rellena de fresa",
         2 => "Pan danés",
         3 => "Torta de Chocolate",
-        4 => "Pay"
+        4 => "Pay",
+        5 => "Cuernito",
+        6 => "Pan de muerto",
+        7 => "Rosca de reyes",
+        8 => "Baguette",
+        9 => "Galleta de mantequilla"
     ];
 
     $producto = $productos_por_cluster[$cluster] ?? "Producto no registrado";
 }
 ?>
 
+
 <style>
-    /* Estilos consistentes con listar.php */
+    /* Estilos existentes */
     .container {
         max-width: 95%;
         margin-top: 20px;
@@ -136,38 +172,45 @@ if ($response !== false) {
     <div class="col-xs-12">
         <h1>Predicción de Ventas</h1>
         
-        <div class="card">
-            <div class="result-item">
-                <strong>Hora actual:</strong> <?= $hora ?>:00 hrs
+        <div class="dashboard-container">
+            <!-- Tarjeta de recomendación (izquierda) -->
+            <div class="card recommendation-card">
+                <div class="result-item">
+                    <strong>Hora actual:</strong> <?= $hora ?>:00 hrs
+                </div>
+                
+                <div class="result-item">
+                    <strong>Día actual:</strong> <?= $dia_semana ?>
+                </div>
+                
+                <?php if ($cluster !== null): ?>
+                    <div class="highlight">
+                        <div class="result-item">
+                            <strong>Cluster predicho:</strong> <?= $cluster ?>
+                        </div>
+                        
+                        <div class="result-item">
+                            <strong>Producto recomendado:</strong> 
+                            <span style="color: <?= $colores[$cluster] ?? '#333' ?>; font-weight: bold;">
+                                <?= $producto ?>
+                            </span>
+                        </div>
+                        
+                        <p style="margin-top: 15px; font-style: italic;">
+                            Basado en el análisis de patrones de compra, este es el producto con mayor probabilidad de venta en este momento.
+                        </p>
+                    </div>
+                <?php else: ?>
+                    <div class="error-message">
+                        <p>Error al contactar el servicio de predicción. Por favor intente más tarde.</p>
+                    </div>
+                <?php endif; ?>
+                
+                <a href="dashboard.php" class="btn-back">
+                    <i class="fa fa-arrow-left"></i> Volver al Menú
+                </a>
             </div>
             
-            <div class="result-item">
-                <strong>Día actual:</strong> <?= $dia_semana ?>
-            </div>
-            
-            <?php if ($cluster !== null): ?>
-                <div class="highlight">
-                    <div class="result-item">
-                        <strong>Cluster predicho:</strong> <?= $cluster ?>
-                    </div>
-                    
-                    <div class="result-item">
-                        <strong>Producto recomendado:</strong> <?= $producto ?>
-                    </div>
-                    
-                    <p style="margin-top: 15px; font-style: italic;">
-                        Basado en el análisis de patrones de compra, este es el producto con mayor probabilidad de venta en este momento.
-                    </p>
-                </div>
-            <?php else: ?>
-                <div class="error-message">
-                    <p>Error al contactar el servicio de predicción. Por favor intente más tarde.</p>
-                </div>
-            <?php endif; ?>
-            
-            <a href="dashboard.php" class="btn-back">
-                <i class="fa fa-arrow-left"></i> Volver al Menú
-            </a>
         </div>
     </div>
 </div>

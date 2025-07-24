@@ -105,6 +105,87 @@ $(function() {
 });
 </script>
 
+<script>
+function obtenerRecomendaciones() {
+    // Obtener IDs de productos en el carrito
+    let productosEnCarrito = [];
+    $(".producto-en-carrito").each(function() {
+        productosEnCarrito.push($(this).data('id'));
+    });
+
+    // Si no hay productos, mostrar mensaje
+    if(productosEnCarrito.length === 0) {
+        $("#recomendaciones-container").html(`
+            <div class="carrito-vacio">
+                <i class="fas fa-shopping-basket"></i>
+                <p>Agrega productos al carrito para ver recomendaciones</p>
+            </div>
+        `);
+        return;
+    }
+
+    // Mostrar loader mientras carga
+    $("#recomendaciones-container").html(`
+        <div class="text-center py-3">
+            <i class="fas fa-spinner fa-spin"></i> Buscando recomendaciones...
+        </div>
+    `);
+
+    // Llamar al servidor para obtener recomendaciones
+    $.ajax({
+        url: "obtener_recomendaciones.php",
+        method: "POST",
+        dataType: 'html',
+        data: {
+            productos: JSON.stringify(productosEnCarrito)
+        },
+        success: function(response) {
+            $("#recomendaciones-container").html(response);
+        },
+        error: function(xhr) {
+            $("#recomendaciones-container").html(`
+                <div class="alert alert-danger">
+                    Error al cargar recomendaciones: ${xhr.statusText}
+                </div>
+            `);
+            console.error("Error:", xhr.responseText);
+        }
+    });
+}
+
+// Llamar a esta función cuando:
+// 1. La página carga
+$(document).ready(function() {
+    obtenerRecomendaciones();
+});
+
+// 2. Cuando se agrega un producto (modifica tu función agregarProducto)
+function agregarProducto(idProducto, cantidad) {
+    if(cantidad < 1) {
+        alert("La cantidad debe ser al menos 1");
+        return;
+    }
+    
+    $.ajax({
+        url: "agregarAlCarrito.php",
+        method: "POST",
+        data: {
+            busqueda: idProducto,
+            tipo_busqueda: "id",
+            cantidad: cantidad
+        },
+        success: function(response) {
+            location.reload(); // Recargar para ver cambios
+            // O mejor: 
+            // obtenerRecomendaciones(); // Actualizar sin recargar
+        },
+        error: function(xhr) {
+            alert("Error: " + xhr.responseText);
+        }
+    });
+}
+</script>
+
 <style>
     /* Estilos personalizados para vender.php */
     .container {
@@ -288,6 +369,85 @@ $(function() {
     margin: 0 5px;
 }
 
+/* Nuevos estilos para la sección de recomendaciones */
+.recomendaciones-section {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.recomendaciones-title {
+    color: #b65d09d1;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.recomendaciones-title i {
+    margin-right: 10px;
+}
+
+.recomendaciones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+}
+
+.recomendacion-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    transition: all 0.3s;
+    border: 1px solid #eee;
+}
+
+.recomendacion-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-color: #b65d09d1;
+}
+
+.recomendacion-nombre {
+    font-weight: 500;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recomendacion-precio {
+    color: #b65d09d1;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.recomendacion-stock {
+    font-size: 0.8em;
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.recomendacion-btn {
+    width: 100%;
+    padding: 8px;
+    font-size: 0.9em;
+}
+
+/* Mejoras para el carrito vacío */
+.carrito-vacio {
+    text-align: center;
+    padding: 30px;
+    color: #6c757d;
+}
+
+.carrito-vacio i {
+    font-size: 3em;
+    margin-bottom: 15px;
+    color: #dee2e6;
+}
 </style>
 
 	<div class="container py-5 col-xs-12">
@@ -367,6 +527,25 @@ $(function() {
             </div>
         </form>
 		
+        <div class="recomendaciones-section">
+            <h3 class="recomendaciones-title">
+                <i class="fas fa-lightbulb"></i> Recomendaciones basadas en tus ventas
+            </h3>
+            <div id="recomendaciones-container">
+                <?php if(empty($_SESSION["carrito"])): ?>
+                    <div class="carrito-vacio">
+                        <i class="fas fa-shopping-basket"></i>
+                        <p>Agrega productos al carrito para ver recomendaciones</p>
+                    </div>
+                <?php else: ?>
+                    <!-- Las recomendaciones se cargarán aquí via AJAX -->
+                    <div class="text-center py-3">
+                        <i class="fas fa-spinner fa-spin"></i> Cargando recomendaciones...
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
 		<div class="table-container">
 		<table class="table">
 			<thead>
@@ -394,6 +573,7 @@ $(function() {
 					<td class="action-btns">
 						<a class="btn btn-danger" href="<?php echo "quitarDelCarrito.php?indice=" . $indice?>"><i class="fa fa-trash"></i>Quitar</a></td>
 				</tr>
+                <tr class="producto-en-carrito" data-id="<?php echo $producto->id ?>">
 				<?php } ?>
 			</tbody>
 		</table>

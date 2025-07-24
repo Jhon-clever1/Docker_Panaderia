@@ -205,7 +205,6 @@ if(!empty($stockBajo)) {
                 <button class="btn btn-secondary btn-card">Acceder</button>
             </div>
         </div>
-        <?php endif; ?>
 
         <!-- Tarjeta de Análisis de Ventas -->
         <div class="card" onclick="window.location.href='analisis_ventas.php'">
@@ -220,6 +219,8 @@ if(!empty($stockBajo)) {
                 <button class="btn btn-info btn-card">Ver Análisis</button>
             </div>
         </div>
+
+         <!--Tarjeta de Prediccion-->
         <div class="card" onclick="window.location.href='prediccion.php'">
             <div class="card-body">
                 <div class="card-icon">
@@ -232,6 +233,19 @@ if(!empty($stockBajo)) {
                 <button class="btn btn-info btn-card">Ver Prediccion</button>
             </div>
         </div>
+        <div class="card" onclick="window.location.href='analisis_asociacion.php'">
+            <div class="card-body">
+                <div class="card-icon">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <h3 class="card-title">Análisis de Asociación</h3>
+                <p class="card-text">Descubre qué productos se compran juntos frecuentemente</p>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-info btn-card">Ver Análisis</button>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 
